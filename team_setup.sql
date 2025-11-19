@@ -1,1 +1,6 @@
-placeholder text so it goes on git
+CREATE TABLE app_user(
+    id SERIAL PRIMARY KEY,
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL CHECK (role IN ('admin', 'viewer'))
+);
