@@ -6,6 +6,16 @@
 </head>
 <body>
     <h1>Register New User</h1>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class=flashes style="color: red; list-style-type: none; padding: 0;">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
     <form method="post">
         <label for="username">Username</label>
         <input name="username" id="username" required>

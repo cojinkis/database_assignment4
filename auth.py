@@ -2,6 +2,8 @@ from flask import Blueprint, request, render_template, flash, redirect, url_for,
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from utilities import get_db_connection
+import home
+import psycopg
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -30,9 +32,11 @@ def register():
                     )
                 conn.commit() # Commit on the connection
             except conn.IntegrityError as e:
-                error = f"User {username} is already registered."
+                error = f"Username is already taken."
             except Exception as e:
                 error = str(e)
+                flash(error)
+
             else:
                 flash("Registration successful! Please log in.")
                 return redirect(url_for("auth.login"))
@@ -49,8 +53,8 @@ def login():
         error = None
         try:
             conn = get_db_connection()
-            with conn.cursor(row_factory=conn.cursor().row_factory) as cur:
-                cur.execute('SELECT * FROM app_user WHERE username = %s', (username))
+            with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
+                cur.execute('SELECT * FROM app_user WHERE username = %s', (username,))
                 user = cur.fetchone()
 
         except Exception as e:
@@ -63,10 +67,11 @@ def login():
             error = "Incorrect password."
 
         if error is None:
+            print("login success")
             # Login successful
             session.clear()
             session['user_id'] = user['id']
-            return redirect(url_for('home'))
+            return redirect(url_for("home.home"))
 
         flash(error)
     return render_template('auth/login.html')
@@ -79,11 +84,11 @@ def load_logged_in_user():
         g.user = None
     else:
         conn = get_db_connection()
-        with conn.cursor(row_factory=conn.cursor().row_factory) as cur:
+        with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
             cur.execute('SELECT * FROM app_user WHERE id = %s', (curr_user_id,))
             g.user = cur.fetchone()
 
 @bp.route('/logout', methods=('GET', 'POST'))
 def logout():
     session.clear()
-    return redirect(url_for('home'))
+    return redirect(url_for('home.home'))
