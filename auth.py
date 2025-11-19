@@ -28,12 +28,11 @@ def register():
                         (username, generate_password_hash(password), role)
                     )
                 conn.commit() # Commit on the connection
-            except conn.IntegrityError:
+            except conn.IntegrityError as e:
                 error = f"User {username} is already registered."
             except Exception as e:
                 error = str(e)
             else:
-                # Success, redirect to login
                 flash("Registration successful! Please log in.")
                 return redirect(url_for("auth.login"))
 

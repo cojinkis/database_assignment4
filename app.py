@@ -8,6 +8,9 @@ except Exception:
     psycopg = None
 
 app = Flask(__name__)
+app.config.from_mapping(
+    SECRET_KEY='dev',
+)
 app.register_blueprint(auth.bp)
 
 def get_db_connection():
