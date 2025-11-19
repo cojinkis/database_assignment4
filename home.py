@@ -4,7 +4,7 @@ from flask import Blueprint, url_for, g
 bp = Blueprint("home", __name__)
 
 @bp.route("/", endpoint="home")
-def index():
+def home():
     """
     Landing page.
     If not logged in: show links to login/register.

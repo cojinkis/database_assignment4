@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, url_for
 import os
-import auth
+import auth, home
 from utilities import get_db_connection
 try:
     import psycopg
@@ -12,14 +12,10 @@ app.config.from_mapping(
     SECRET_KEY='dev',
 )
 app.register_blueprint(auth.bp)
+app.register_blueprint(home.bp)
 
 
 
-
-@app.route("/")
-def home():
-    link = url_for('health_db')
-    return f"hello world. Check DB health at <a href='{link}'> {link} </a>"
 
 
 @app.route('/health-db')
