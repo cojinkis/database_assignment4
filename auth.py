@@ -1,7 +1,7 @@
 from flask import Blueprint, request, render_template, flash, redirect, url_for, session, g, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
-import app
+from utilities import get_db_connection
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -11,7 +11,8 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        role = request.form.get('role', 'viewer')
+        role = request.form.get('role')
+        print(role)
         error = None
 
         if not username:
@@ -21,7 +22,7 @@ def register():
 
         if error is None:
             try:
-                conn = app.get_db_connection()
+                conn = get_db_connection()
                 with conn.cursor() as cur:
                     cur.execute(
                         "INSERT INTO app_user (username, password_hash, role) VALUES (%s, %s, %s)",
@@ -45,7 +46,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = app.get_db_connection() # for getting the user db, implemented later
+        db = get_db_connection() # for getting the user db, implemented later
         error = None
         user = db.execute(
             'SELECT * FROM app_user WHERE username = ?', (username)
@@ -70,7 +71,7 @@ def load_logged_in_user():
     if curr_user_id is None:
         g.user = None
     else:
-        g.user = app.get_db_connection().execute(
+        g.user = get_db_connection().execute(
             'SELECT * FROM app_user WHERE id = ?', (curr_user_id)
         ).fetchone()
 

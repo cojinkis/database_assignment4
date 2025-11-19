@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, url_for
 import os
 import auth
-
+from utilities import get_db_connection
 try:
     import psycopg
 except Exception:
@@ -13,21 +13,7 @@ app.config.from_mapping(
 )
 app.register_blueprint(auth.bp)
 
-def get_db_connection():
-    """Return a new psycopg connection using the DATABASE_URL env var.
 
-    Raises ValueError if psycopg is not installed or DATABASE_URL is not set.
-    """
-    if psycopg is None:
-        raise ValueError("psycopg is not installed; install requirements.txt")
-    database_url = os.environ.get("DATABASE_URL", "")
-    if not database_url:
-        raise ValueError("DATABASE_URL environment variable is not set")
-    # If the env var was set with surrounding quotes (common on Windows cmd: set VAR="value"),
-    # strip surrounding single or double quotes so it actually works.
-    database_url = database_url.strip()
-    database_url = database_url.strip('"\'')
-    return psycopg.connect(database_url)
 
 
 @app.route("/")
