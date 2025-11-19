@@ -46,21 +46,28 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db_connection() # for getting the user db, implemented later
         error = None
-        user = db.execute(
-            'SELECT * FROM app_user WHERE username = ?', (username)
-        ).fetchone()
+        try:
+            conn = get_db_connection()
+            with conn.cursor(row_factory=conn.cursor().row_factory) as cur:
+                cur.execute('SELECT * FROM app_user WHERE username = %s', (username))
+                user = cur.fetchone()
+
+        except Exception as e:
+            error = str(e)
+            user = None
 
         if user is None:
-            error = "Incorrect username or the user is not registered with the system"
+            error = "Incorrect username or the user is not registered with the system."
         elif not check_password_hash(user['password_hash'], password):
-            error = "Incorrect password"
-        
+            error = "Incorrect password."
+
         if error is None:
+            # Login successful
             session.clear()
             session['user_id'] = user['id']
             return redirect(url_for('home'))
+
         flash(error)
     return render_template('auth/login.html')
 
@@ -71,9 +78,10 @@ def load_logged_in_user():
     if curr_user_id is None:
         g.user = None
     else:
-        g.user = get_db_connection().execute(
-            'SELECT * FROM app_user WHERE id = ?', (curr_user_id)
-        ).fetchone()
+        conn = get_db_connection()
+        with conn.cursor(row_factory=conn.cursor().row_factory) as cur:
+            cur.execute('SELECT * FROM app_user WHERE id = %s', (curr_user_id,))
+            g.user = cur.fetchone()
 
 @bp.route('/logout', methods=('GET', 'POST'))
 def logout():
