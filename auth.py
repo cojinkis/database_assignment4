@@ -32,9 +32,11 @@ def register():
                     )
                 conn.commit() # Commit on the connection
             except conn.IntegrityError as e:
-                error = f"User {username} is already registered."
+                error = f"Username is already taken."
             except Exception as e:
                 error = str(e)
+                flash(error)
+
             else:
                 flash("Registration successful! Please log in.")
                 return redirect(url_for("auth.login"))
@@ -89,4 +91,4 @@ def load_logged_in_user():
 @bp.route('/logout', methods=('GET', 'POST'))
 def logout():
     session.clear()
-    return redirect(url_for('home'))
+    return redirect(url_for('home.home'))
