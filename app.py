@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, url_for
 import os
-from . import auth
+import auth
 
 try:
     import psycopg

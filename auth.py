@@ -1,6 +1,8 @@
-from flask import Blueprint, request, render_template, flash, redirect, url_for, session, g
+from flask import Blueprint, request, render_template, flash, redirect, url_for, session, g, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+import app
+
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -9,8 +11,9 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db() # for getting the user db, implemented later
+        role = request.form.get('role', 'viewer')
         error = None
+
         if not username:
             error = 'Username is Required.'
         elif not password:
@@ -18,17 +21,24 @@ def register():
 
         if error is None:
             try:
-                db.execute(
-                    "INSERT INTO app_user (username, password_hash) VALUES (?, ?)",
-                    (username, generate_password_hash(password))
-                )
-                db.commit()
-            except db.IntegrityError:
-                error = f"user {username} is already registered with the system"
+                conn = app.get_db_connection()
+                with conn.cursor() as cur:
+                    cur.execute(
+                        "INSERT INTO app_user (username, password_hash, role) VALUES (%s, %s, %s)",
+                        (username, generate_password_hash(password), role)
+                    )
+                conn.commit() # Commit on the connection
+            except conn.IntegrityError:
+                error = f"User {username} is already registered."
+            except Exception as e:
+                error = str(e)
             else:
+                # Success, redirect to login
+                flash("Registration successful! Please log in.")
                 return redirect(url_for("auth.login"))
-            
-            flash(error)
+
+        flash(error)
+
     return render_template('auth/register.html')
 
 @bp.route('/login', methods=('GET', 'POST'))
@@ -36,7 +46,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db() # for getting the user db, implemented later
+        db = app.get_db_connection() # for getting the user db, implemented later
         error = None
         user = db.execute(
             'SELECT * FROM app_user WHERE username = ?', (username)
@@ -61,7 +71,7 @@ def load_logged_in_user():
     if curr_user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute(
+        g.user = app.get_db_connection().execute(
             'SELECT * FROM app_user WHERE id = ?', (curr_user_id)
         ).fetchone()
 
