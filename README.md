@@ -67,21 +67,21 @@ Windows (cmd):
 
 ```
 .venv\Scripts\activate
-python app.py
+flask run
 ```
 
 Windows (PowerShell):
 
 ```
 .venv\Scripts\Activate.ps1
-python app.py
+flask run
 ```
 
 Linux/macOS:
 
 ```
 source .venv/bin/activate
-python app.py
+flask run
 ```
 
 The app will listen on `http://127.0.0.1:5000` by default.
