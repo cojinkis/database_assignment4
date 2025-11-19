@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, url_for
 import os
+from . import auth
 
 try:
     import psycopg
@@ -7,7 +8,7 @@ except Exception:
     psycopg = None
 
 app = Flask(__name__)
-
+app.register_blueprint(auth.bp)
 
 def get_db_connection():
     """Return a new psycopg connection using the DATABASE_URL env var.
