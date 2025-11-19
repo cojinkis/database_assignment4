@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, url_for
 import os
 import auth
+import projects
 from utilities import get_db_connection
 try:
     import psycopg
@@ -12,7 +13,7 @@ app.config.from_mapping(
     SECRET_KEY='dev',
 )
 app.register_blueprint(auth.bp)
-
+app.register_blueprint(projects.bp)
 
 
 
