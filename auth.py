@@ -40,6 +40,8 @@ def register():
             else:
                 flash("Registration successful! Please log in.")
                 return redirect(url_for("auth.login"))
+            finally:
+                conn.close()
 
         flash(error)
 

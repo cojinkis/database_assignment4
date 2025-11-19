@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, url_for
 import os
-import auth, home, projects
+import auth, home, projects, managers
 from utilities import get_db_connection
 try:
     import psycopg
@@ -14,6 +14,7 @@ app.config.from_mapping(
 app.register_blueprint(auth.bp)
 app.register_blueprint(projects.bp)
 app.register_blueprint(home.bp)
+app.register_blueprint(managers.bp)
 
 
 
