@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Employee Overview</title>
+    <style>
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid #ddd; padding: 8px; }
+      th { background: #f2f2f2; }
+      form.inline * { margin-right: 8px; }
+    </style>
+  </head>
+  <body>
+
+    {% if not logged_in %}
+      <h1>Welcome</h1>
+      <p>
+        <a href="{{ login_link }}">Login</a> or
+        <a href="{{ register_link }}">Register</a>.
+      </p>
+      <p>
+        Check DB health at
+        <a href="{{ health_link }}">{{ health_link }}</a>
+      </p>
+
+    {% else %}
+      <h1>Employee Overview</h1>
+
+      <p>
+        Hello, {{ username }}!
+        <a href="{{ logout_link }}">Logout</a> |
+        Check DB health at
+        <a href="{{ health_link }}">{{ health_link }}</a>
+      </p>
+
+      <form method="get" class="inline" style="margin-bottom: 1em;">
+        <label for="dept">Department:</label>
+        <select name="dept" id="dept">
+          <option value="">All</option>
+          {% for d in departments %}
+            {% set dnum = d['dnumber'] if 'dnumber' in d else d[0] %}
+            {% set dname = d['dname'] if 'dname' in d else d[1] %}
+            <option value="{{ dnum }}"
+              {% if current_dept == dnum|string %}selected{% endif %}>
+              {{ dname }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <label for="q">Name:</label>
+        <input type="text" name="q" id="q" value="{{ q }}" placeholder="Search by name">
+
+        <label for="sort_by">Sort by:</label>
+        <select name="sort_by" id="sort_by">
+          <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name</option>
+          <option value="total_hours" {% if sort_by == 'total_hours' %}selected{% endif %}>Total Hours</option>
+        </select>
+
+        <select name="order">
+          <option value="asc" {% if order == 'asc' %}selected{% endif %}>Ascending</option>
+          <option value="desc" {% if order == 'desc' %}selected{% endif %}>Descending</option>
+        </select>
+
+        <button type="submit">Apply</button>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Employee Name</th>
+            <th>Department</th>
+            <th># Dependents</th>
+            <th># Projects</th>
+            <th>Total Hours</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in employees %}
+            {% set fname = e['fname'] %}
+            {% set minit = e['minit'] %}
+            {% set lname = e['lname'] %}
+            {% set dept_name = e['department_name'] %}
+            {% set num_dep = e['num_dependents'] %}
+            {% set num_proj = e['num_projects'] %}
+            {% set total_hours = e['total_hours'] %}
+            <tr>
+              <td>{{ fname }}{% if minit %} {{ minit }}{% endif %} {{ lname }}</td>
+              <td>{{ dept_name or 'N/A' }}</td>
+              <td style="text-align:right">{{ num_dep }}</td>
+              <td style="text-align:right">{{ num_proj }}</td>
+              <td style="text-align:right">{{ '%.2f'|format(total_hours) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+
+  </body>
+</html>
