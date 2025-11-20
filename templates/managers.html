@@ -15,13 +15,19 @@
     <table>
       <thead>
         <tr>
-          <th>Department Summary</th>
+          <th>Department (Name and Number)</th>
+          <th>Manager's Full Name</th>
+          <th>Employee Count</th>
+          <th>Total Hours Worked</th>
         </tr>
       </thead>
       <tbody>
         {% for item in display %}
         <tr>
-          <td>{{ item['dept_info'] }}</td>
+          <td>{{ item.dept_name_num }}</td>
+          <td>{{ item.manager_name }}</td>
+          <td style="text-align:right">{{ item.emp_count }}</td>
+          <td style="text-align:right">{{ "%.2f"|format(item.total_hours) }}</td>
         </tr>
         {% endfor %}
       </tbody>

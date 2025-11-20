@@ -9,42 +9,35 @@ bp = Blueprint('managers', __name__, url_prefix='/managers')
 def list_managers():
     ''' corresponds to A6 requirement '''
 
-    # SQL commands
-
-    # gets the number of employees in each department
-    num_emp = (
-        'SELECT Dname,COUNT(SSN) AS NoOfEmployees ' 
-        'FROM Employee, Department ' 
-        'WHERE Dnumber=Dno ' 
-        'GROUP BY Dname ' 
+    # A single SQL query to get a high-level overview of all departments.
+    # It uses LEFT JOINs to ensure all departments are listed, even with 0 employees or hours.
+    sql = (
+        "SELECT "
+        "CONCAT(d.Dname, ' (', d.Dnumber, ')') AS dept_name_num, "
+        "COALESCE(NULLIF(CONCAT_WS(' ', m.Fname, m.Minit, m.Lname), ''), 'None') AS manager_name, "
+        "COUNT(DISTINCT e.Ssn) AS employee_count, "
+        "COALESCE(SUM(w.Hours), 0) AS total_hours "
+        "FROM Department d "
+        "LEFT JOIN Employee m ON d.Mgr_ssn = m.Ssn "
+        "LEFT JOIN Employee e ON d.Dnumber = e.Dno "
+        "LEFT JOIN Works_On w ON e.Ssn = w.Essn "
+        "GROUP BY d.Dnumber, d.Dname, m.Fname, m.Minit, m.Lname "
+        "ORDER BY d.Dname"
     )
 
     display = []
-    display_dict = {
-        "dept_info": "",
-        "manager_name": "",
-        "emp_count": None,
-        "dept_tot_hours": None
-    }
-
     try:
         conn = get_db_connection()
         with conn.cursor() as cur:
-            l =cur.execute(num_emp)
-            for entry in l:
-                thingy_squared = str(entry[0]) + ", " + str(entry[1])
-
-                placeholder = display_dict.copy()
-                placeholder['dept_info'] = thingy_squared
-                display.append(placeholder)
-
-            # num_emp_rows = cur.fetchall()
-            # print(num_emp_rows)
-            # for r in num_emp_rows:
-            #     print(r)
-            #     entry = display_dict.copy()
-            #     entry['dept_info'] = r[] + ", " + str(r['NoOfEmployees'])
-            #     display.append(entry)
+            cur.execute(sql)
+            rows = cur.fetchall()
+            for r in rows:
+                display.append({
+                    "dept_name_num": r[0],
+                    "manager_name": r[1],
+                    "emp_count": r[2],
+                    "total_hours": float(r[3])
+                })
     finally:
         conn.close()
 
