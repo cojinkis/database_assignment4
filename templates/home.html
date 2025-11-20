@@ -1,5 +1,7 @@
 <!doctype html>
 <html lang="en">
+
+  
   <head>
     <meta charset="utf-8">
     <title>Employee Overview</title>
@@ -8,26 +10,34 @@
       th, td { border: 1px solid #ddd; padding: 8px; }
       th { background: #f2f2f2; }
       form.inline * { margin-right: 8px; }
-    </style>
+      </style>
   </head>
   <body>
-
+    
     {% include '_header.html' %}
-
+    
     {% if not logged_in %}
-      <h1>Welcome</h1>
-      <p>
-        <a href="{{ login_link }}">Login</a> or
-        <a href="{{ register_link }}">Register</a>.
-      </p>
-      <p>
-        Check DB health at
-        <a href="{{ health_link }}">{{ health_link }}</a>
-      </p>
-
+    <h1>Welcome</h1>
+    <p>
+      <a href="{{ login_link }}">Login</a> or
+      <a href="{{ register_link }}">Register</a>.
+    </p>
+    <p>
+      Check DB health at
+      <a href="{{ health_link }}">{{ health_link }}</a>
+    </p>
+    
     {% else %}
-      <h1>Employee Overview</h1>
-
+    
+    
+    <h1>Employee Overview</h1>
+    
+    <div style="margin-bottom: 1em;">
+      <a href="{{ url_for('home.export_home_data', dept=current_dept, q=q, sort_by=sort_by, order=order) }}">
+        Export to Excel (CSV)
+      </a>
+    </div>
+    
       <p>
         Hello, {{ username }}!
         <a href="{{ logout_link }}">Logout</a> |

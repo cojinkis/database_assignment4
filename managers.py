@@ -7,10 +7,10 @@ bp = Blueprint('managers', __name__, url_prefix='/managers')
 
 @bp.route('/')
 def list_managers():
-    ''' corresponds to A6 requirement '''
+    ''' Lists the manager's summary '''
 
-    # A single SQL query to get a high-level overview of all departments.
-    # It uses LEFT JOINs to ensure all departments are listed, even with 0 employees or hours.
+    # SQL query to get all I need in one step
+    # Coalesce used to return NULL if no value associated
     sql = (
         "SELECT "
         "CONCAT(d.Dname, ' (', d.Dnumber, ')') AS dept_name_num, "
