@@ -3,6 +3,9 @@
     {% if g.user %}
     <a href="{{ url_for('home.home') }}">Home</a>
     <a href="{{ url_for('projects.list_projects') }}">Projects</a>
+    {% if g.user.get('role') == "admin" %}
+    <a href="{{ url_for('employees.list_employees') }}">Employees (admin)</a>
+    {% endif %}
     <a href="{{ url_for('managers.list_managers') }}">Managers</a>
     {% endif %}
     <span style="flex:1"></span>
