@@ -11,6 +11,7 @@
     </style>
   </head>
   <body>
+    {% include '_header.html' %}
     <h1>Projects – Portfolio Summary</h1>
     <p>
       <a href="{{ url_for('projects.export_projects', sort_by=request.args.get('sort_by'), order=request.args.get('order')) }}">Export CSV</a>

@@ -1,0 +1,17 @@
+<header style="background:#f8f9fa;padding:10px;border-bottom:1px solid #ddd;">
+  <nav style="display:flex;gap:12px;align-items:center;">
+    {% if g.user %}
+    <a href="{{ url_for('home.home') }}">Home</a>
+    <a href="{{ url_for('projects.list_projects') }}">Projects</a>
+    <a href="{{ url_for('managers.list_managers') }}">Managers</a>
+    {% endif %}
+    <span style="flex:1"></span>
+    {% if g.user %}
+      <span>Signed in as {{ g.user.get('username') or g.user.get('user') }}</span>
+      <a href="{{ url_for('auth.logout') }}">Log Out</a>
+    {% else %}
+      <a href="{{ url_for('auth.login') }}">Log In</a>
+      <a href="{{ url_for('auth.register') }}">Register</a>
+    {% endif %}
+  </nav>
+</header>

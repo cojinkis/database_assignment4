@@ -12,6 +12,7 @@
     </style>
   </head>
   <body>
+    {% include '_header.html' %}
     <h1>Project: {{ project_name }} ({{ project_id }})</h1>
 
     {% with messages = get_flashed_messages() %}
