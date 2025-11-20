@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Project {{ project_name }} ({{ project_id }})</title>
+    <style>
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid #ddd; padding: 8px; }
+      th { background: #f2f2f2; }
+      form { margin-top: 1rem; }
+      .flash { color: red; }
+    </style>
+  </head>
+  <body>
+    <h1>Project: {{ project_name }} ({{ project_id }})</h1>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash">
+          {% for msg in messages %}
+            <li>{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% if error %}
+      <div class="flash">{{ error }}</div>
+    {% endif %}
+
+    <h2>Assigned Employees</h2>
+    {% if assigned %}
+    <table>
+      <thead>
+        <tr><th>Full Name</th><th style="text-align:right">Hours</th></tr>
+      </thead>
+      <tbody>
+        {% for a in assigned %}
+        <tr>
+          <td>{{ a.full_name }}</td>
+          <td style="text-align:right">{{ '%.1f'|format(a.hours) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p>No employees assigned to this project.</p>
+    {% endif %}
+
+    {% if g.user and g.user.get('role') == 'admin' %}
+    <h2>Assign / Add Hours</h2>
+    <form method="post">
+      <label for="employee_ssn">Employee:</label>
+      <select name="employee_ssn" id="employee_ssn">
+        <option value="">-- select employee --</option>
+        {% for e in employees %}
+        <option value="{{ e.ssn }}">{{ e.full_name }} ({{ e.ssn }})</option>
+        {% endfor %}
+      </select>
+
+      <label for="hours">Hours:</label>
+      <input type="number" step="0.1" min="0" name="hours" id="hours" required>
+
+      <button type="submit">Add Hours</button>
+    </form>
+    {% else %}
+      <p>This page is read-only for your account.</p>
+    {% endif %}
+
+    <p><a href="/projects/">← Back to Projects</a></p>
+  </body>
+</html>

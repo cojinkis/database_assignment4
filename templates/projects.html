@@ -12,6 +12,9 @@
   </head>
   <body>
     <h1>Projects – Portfolio Summary</h1>
+    <p>
+      <a href="{{ url_for('projects.export_projects', sort_by=request.args.get('sort_by'), order=request.args.get('order')) }}">Export CSV</a>
+    </p>
     <table>
       <thead>
         <tr>
@@ -38,6 +41,11 @@
           <td>{{p.department_name or 'N/A'}}</td>
           <td style="text-align:right">{{p.headcount}}</td>
           <td style="text-align:right">{{p.total_hours}}</td>
+          <!-- {% if g.user and g.user.get('role') == 'admin' %}
+          <td>
+            <a href="#">Edit</a> | <a href="#">Delete</a>
+          </td>
+          {% endif %} -->
         </tr>
         {% endfor %}
       </tbody>
