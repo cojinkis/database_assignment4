@@ -61,31 +61,23 @@ psql -d $DATABASE_URL -f team_setup.sql
 
 ## 4. Run the app
 
-Activate the virtual environment and run the Flask app directly. Make sure `DATABASE_URL` is set first (see section 2).
+Activate the virtual environment and run the app. There are two ways:
 
-Windows (cmd):
-
-```
-.venv\Scripts\activate
-flask run
-```
-
-Windows (PowerShell):
+- Recommended (clean runner):
 
 ```
-.venv\Scripts\Activate.ps1
-flask run
+.venv\Scripts\activate         # Windows cmd
+# or
+.venv\Scripts\Activate.ps1    # Windows PowerShell
+
+source .venv/bin/activate       # macOS / Linux
+
+python run.py
 ```
 
-Linux/macOS:
-
-```
-source .venv/bin/activate
-flask run
-```
+- Alternative (Flask CLI): set `FLASK_APP=app.py` and `flask run` — this may fail if `app.py` is executed as a script in your environment. If you see import errors, use `python run.py` above.
 
 The app will listen on `http://127.0.0.1:5000` by default.
-
 ## 5. Test DB route
 
 Use the `/health-db` endpoint to verify the app can connect to the database and run a simple query.
