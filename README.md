@@ -91,3 +91,10 @@ curl http://127.0.0.1:5000/health-db
 ```
 
 The endpoint returns JSON with `status: ok` when connected, or `status: error` and an error message if the connection fails.
+
+## Indexes added in `team_setup.sql`
+
+- `idx_employee_name ON Employee (Lname, Fname)`: Speeds ordered scans used on the Home (Employee Overview, A2) page where users filter and sort by employee name.
+- `idx_workson_pno ON Works_On (Pno)`: Speeds up project related aggregates and joins used on the Projects page (A3) and Project Details (A4) when computing headcount and total assigned hours.
+
+These indexes are included in `team_setup.sql` and justified above.

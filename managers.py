@@ -1,9 +1,16 @@
 from flask import Blueprint
 import os
 from utilities import get_db_connection
-from flask import render_template, request
+from flask import render_template, request, g, redirect, url_for
 
 bp = Blueprint('managers', __name__, url_prefix='/managers')
+
+
+@bp.before_request
+def require_login():
+    '''Protect managers pages: only authenticated users may access.'''
+    if g.get('user') is None:
+        return redirect(url_for('auth.login'))
 
 @bp.route('/')
 def list_managers():
