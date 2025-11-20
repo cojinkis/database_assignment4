@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, url_for
+from flask import Flask, jsonify, url_for, render_template
 import os
 import auth, home, projects, managers, employees
 from utilities import get_db_connection
@@ -18,7 +18,9 @@ app.register_blueprint(managers.bp)
 app.register_blueprint(employees.bp)
 
 
-
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('errors/404.html'), 404
 
 @app.route('/health-db')
 def health_db():
