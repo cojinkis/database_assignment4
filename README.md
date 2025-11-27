@@ -72,7 +72,7 @@ Activate the virtual environment and run the app. There are two ways:
 
 source .venv/bin/activate       # macOS / Linux
 
-python run.py
+flask run                       # OS Independent
 ```
 
 - Alternative (Flask CLI): set `FLASK_APP=app.py` and `flask run` — this may fail if `app.py` is executed as a script in your environment. If you see import errors, use `python run.py` above.
